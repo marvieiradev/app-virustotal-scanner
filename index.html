@@ -3,15 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>VirusTotal Scanner</title>
   </head>
   <body>
     <div class="container">
-      <section></section>
+      <h1>Scanner de Virus</h1>
+      <section>
+        <h2>Escanear URL</h2>
+        <input
+          type="text"
+          id="urlInput"
+          placeholder="Digite uma URL (ex. https://www.exemplo.com)"
+        />
+        <button onclick="scanURL()">Escanear URL</button>
+      </section>
       <section>
         <h2>Escanear Arquivo</h2>
         <input type="file" id="fileInput" />
-        <button onclick="scanFile()">Escanear</button>
+        <button onclick="scanFile()">Escanear Arquivo</button>
       </section>
       <div id="result"></div>
       <div id="fullReportModal" class="modal">
