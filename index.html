@@ -1,9 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VirusTotal Scanner</title>
   </head>
-  <body></body>
+  <body>
+    <div class="container">
+      <section></section>
+      <section>
+        <h2>Escanear Arquivo</h2>
+        <input type="file" id="fileInput" />
+        <button onclick="scanFile()">Escanear</button>
+      </section>
+      <div id="result"></div>
+      <div id="fullReportModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h2>Relatório Completo</h2>
+          <div id="fullReportContent"></div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
