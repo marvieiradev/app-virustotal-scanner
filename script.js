@@ -75,3 +75,42 @@ async function scanURL() {
     showError(`Erro: ${error.message}`);
   }
 }
+
+async function scanFile() {
+  const file = getElement("fileInput").files[0];
+  if (!file) return showError("Selecione um arquivo!");
+  if (file.size > 32 * 1024 * 1024)
+    return showError("O arquivo excede o limite de 32MB");
+
+  try {
+    showLoading("Enviando arquivo...");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const updateResult = await makeRequest(
+      "https://www.virustotal.com/api/v3/files",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!formData.data?.id) {
+      throw new Error("Erro em obter o ID do arquivo!");
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    showLoading("Obtendo resultados do escaneamento...");
+    const analysisResult = await makeRequest(
+      `https://www.virustotal.com/api/v3/analyses/${updateResult.data.id}`
+    );
+
+    if (!analysisResult.data?.id) {
+      throw new Error("Erro em obter o resultado das analises!");
+    }
+
+    await pollAnalysisResults(submitResult.data.id);
+  } catch (error) {
+    showError(`Erro: ${error.message}`);
+  }
+}
