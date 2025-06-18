@@ -255,3 +255,51 @@ function showFormattedResult(data) {
     1000
   );
 }
+
+function showFullReport(reportData) {
+  const modal = getElement("fullReportModal");
+  const results = data.data?.attributes?.results;
+
+  getElement("fullReportContent").innerHTML = `
+      <h3>Relatório Completo</h3>
+      ${
+        results
+          ? `
+        <table>
+        <tr><th>Engine</th><th>Resultado</th></tr>
+        ${Object.entries(results)
+          .map(
+            ([engine, { category }]) => `
+            <tr>
+              <td>${engine}</td>
+              <td class="${
+                category === "malicius"
+                  ? "malicius"
+                  : category === "suspicius"
+                  ? "suspicius"
+                  : category === "suspicius"
+                  ? "suspicius"
+                  : "safe"
+              }">
+                ${category}
+              </td>
+            </tr>
+          `
+          )
+          .join("")}
+        </table>
+      `
+          : "<p>Nenhum detalhe disponível!</p>"
+      }
+  `;
+
+  modal.style.display = "block";
+  modal.offsetHeight;
+  modal.classList.add("show");
+}
+
+const closeModal = () => {
+  const modal = getElement("fullReportModal");
+  modal.classList.remove("show");
+  setTimeout(() => (modal.style.display = "none"), 300);
+};
