@@ -303,3 +303,8 @@ const closeModal = () => {
   modal.classList.remove("show");
   setTimeout(() => (modal.style.display = "none"), 300);
 };
+
+window.addEventListener("load", () => {
+  const modal = getElement("fullReportModal");
+  window.addEventListener("click", (e) => e.target === modal && closeModal());
+});
