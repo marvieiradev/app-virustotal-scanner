@@ -21,7 +21,7 @@ const showError = (message) =>
     <p class="error">${message}</p>
 `);
 
-async function amkeRequest(url, options = {}) {
+async function makeRequest(url, options = {}) {
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -34,7 +34,7 @@ async function amkeRequest(url, options = {}) {
     const error = await response
       .json()
       .catch(() => ({ error: { message: response.statusText } }));
-    throw new Error(error.error?.message || "Request failed!");
+    throw new Error(error.error?.message || "Falha na requisição!");
   }
   return response.json();
 }
@@ -57,7 +57,7 @@ async function scanURL() {
       {
         method: "POST",
         headers: {
-          accepted: "application/json",
+          accept: "application/json",
           "content-type": "application/x-www-form-urlencoded",
         },
         body: `url=${encodedUrl}`,
@@ -95,7 +95,7 @@ async function scanFile() {
       }
     );
 
-    if (!formData.data?.id) {
+    if (!updateResult.data?.id) {
       throw new Error("Erro em obter o ID do arquivo!");
     }
 
@@ -109,7 +109,7 @@ async function scanFile() {
       throw new Error("Erro em obter o resultado das analises!");
     }
 
-    await pollAnalysisResults(submitResult.data.id);
+    await pollAnalysisResults(analysisResult.data.id, file.name);
   } catch (error) {
     showError(`Erro: ${error.message}`);
   }
@@ -159,12 +159,12 @@ async function pollAnalysisResults(analysisId, fileName = "") {
 }
 
 function showFormattedResult(data) {
-  if (!data.data?.attributes?.stats)
+  if (!data?.data?.attributes?.stats)
     return showError("Formato de resposta inválido!");
 
   const stats = data.data.attributes.stats;
   const total = Object.values(stats).reduce((sum, val) => sum + val, 0);
-  if (total) return showError("Nenhum resultado de análise disponível!");
+  if (!total) return showError("Nenhum resultado de análise disponível!");
 
   const getPercent = (val) => ((val / total) * 100).toFixed(1);
 
@@ -187,6 +187,13 @@ function showFormattedResult(data) {
       ? "Suspeito"
       : "Seguro";
 
+  const veredictClass =
+    stats.malicious > 0
+      ? "malicious"
+      : stats.suspicious > 0
+      ? "suspicious"
+      : "safe";
+
   updateResult(`
     <h3>Resultados do Scanner</h3>
     <div class="scan-stats">
@@ -195,7 +202,7 @@ function showFormattedResult(data) {
       </p>
       <div class="progress-section">
         <div class="progress-label">
-          <span>Resultados de detecção</span>
+          <span>Resultados da Detecção</span>
           <span class="progress-percent">Taxa de detecção: ${
             percents.malicious
           }%</span>
@@ -208,7 +215,7 @@ function showFormattedResult(data) {
             <div class="progress-bar ${color}"
               style="width: ${percents[key]}%"
               title="${categories[key].label} 
-              : ${stats[key]} (${percent[key]}%)">
+              : ${stats[key]} (${percents[key]}%)">
               <span class="progress-label-overlay">${stats[key]}</span>
             </div>
           `
@@ -244,7 +251,7 @@ function showFormattedResult(data) {
       </div>
     </div>
     <button onclick="showFullReport(this.getAttribute('data-report'))"
-    data-reports='${JSON.stringify(data)}'>Ver Relatório Completo</button>
+    data-report='${JSON.stringify(data)}'>Ver Relatório Completo</button>
   `);
 
   setTimeout(
@@ -257,6 +264,8 @@ function showFormattedResult(data) {
 }
 
 function showFullReport(reportData) {
+  const data =
+    typeof reportData === "string" ? JSON.parse(reportData) : reportData;
   const modal = getElement("fullReportModal");
   const results = data.data?.attributes?.results;
 
@@ -273,12 +282,10 @@ function showFullReport(reportData) {
             <tr>
               <td>${engine}</td>
               <td class="${
-                category === "malicius"
-                  ? "malicius"
-                  : category === "suspicius"
-                  ? "suspicius"
-                  : category === "suspicius"
-                  ? "suspicius"
+                category === "malicious"
+                  ? "malicious"
+                  : category === "suspicious"
+                  ? "suspicious"
                   : "safe"
               }">
                 ${category}
@@ -287,6 +294,7 @@ function showFullReport(reportData) {
           `
           )
           .join("")}
+          
         </table>
       `
           : "<p>Nenhum detalhe disponível!</p>"

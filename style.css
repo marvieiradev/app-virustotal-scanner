@@ -147,12 +147,12 @@ button:hover {
   font-weight: 600;
 }
 
-.safe {
+.malicious {
   color: var(--danger);
   font-weight: 600;
 }
 
-.suspicius {
+.suspicious {
   color: var(--warning);
   font-weight: 600;
 }
@@ -236,7 +236,8 @@ button:hover {
 
 #fullReportContent th {
   background-color: var(--border-radius);
-  color: #fff;
+  color: #0a0000;
+  border: 1px solid #e2e8f0;
   font-weight: 600;
   padding: 1rem;
 }
@@ -279,11 +280,11 @@ button:hover {
   margin-right: 8px;
 }
 
-.scan-stats li span.malicius::before {
+.scan-stats li span.malicious::before {
   background-color: var(--danger);
 }
 
-.scan-stats li span.suspicius::before {
+.scan-stats li span.suspicious::before {
   background-color: var(--warning);
 }
 
@@ -335,7 +336,7 @@ button:hover {
   min-width: 2rem;
 }
 
-.progress-bar.malicius {
+.progress-bar.malicious {
   background: #dc2626;
   background-image: linear-gradient(
     110deg,
@@ -430,7 +431,7 @@ button:hover {
   background: #64748b;
 }
 
-.detect-details {
+.detection-details {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 0.75rem;
@@ -466,7 +467,7 @@ button:hover {
   opacity: 0.8;
 }
 
-.detail-item.progress-bar.malicius::before {
+.detail-item.progress-bar.malicious::before {
   background: #dc2626;
 }
 
